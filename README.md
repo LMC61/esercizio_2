@@ -95,3 +95,7 @@ It is well suited for beginner courses and workshops.
 
 This project is provided for educational use.  
 No warranty is expressed or implied.
+
+Cosa fa l'app e cosa fa l'help
+
+### APP
