@@ -25,6 +25,7 @@ try {
         echo "Commands:\n";
         echo "  audit:ping                 healthcheck\n";
         echo "  audit:log --user=U --action=A   write an audit log event\n";
+        echo "  audit:whoami user name\n";
         exit(0);
     }
 
@@ -35,8 +36,14 @@ try {
         exit(0);
     }
 
+    // 5) Comando whoami: scrive current user.
+    if ($cmd === 'audit:whoami') {
+        $user = get_current_user();
+        echo $user . "\n";
+        exit(0);
+    }
 
-    // 5) Comando principale: scrive un evento di audit con user e action.
+    // 6) Comando principale: scrive un evento di audit con user e action.
     if ($cmd === 'audit:log') {
         $user = $opts['user'] ?? null;
         $action = $opts['action'] ?? null;
@@ -45,7 +52,7 @@ try {
             throw new InvalidArgumentException("Missing --user or --action");
         }
 
-        log_event($cfg, 'info', 'audit.event', ['user' => $user, 'action' => $action]);
+        log_event($cfg, 'info', 'audit.event', ['user' => $user, 'action' => $action, 'level' => $level]);
         echo "ok\n";
         exit(0);
     }
