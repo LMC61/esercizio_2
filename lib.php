@@ -47,8 +47,9 @@ function parse_cli_args(array $argv, bool $strict): array {
     $opts = [
         'user'   => null,
         'action' => null,
+        'level' =>  'info',
     ];
-
+    
     // Scorriamo tutti gli argomenti a partire da indice 2 (dopo script e comando)
     foreach ($argv as $i => $a) {
         if ($i < 2) continue; // salta $argv[0] (script) e $argv[1] (comando)
@@ -57,6 +58,8 @@ function parse_cli_args(array $argv, bool $strict): array {
             $opts['user'] = substr($a, 7);
         } elseif (str_starts_with($a, '--action=')) {
             $opts['action'] = substr($a, 9);
+        } elseif (str_starts_with($a, '--level=')) {
+            $opts['level'] = substr($a, 8);
         } else {
             // Argomento non riconosciuto: in modalità strict blocchiamo l'esecuzione
             if ($strict) {
