@@ -24,8 +24,8 @@ try {
         echo $cfg['app_name'] . " v" . $cfg['version'] . "\n";
         echo "Commands:\n";
         echo "  audit:ping                 healthcheck\n";
-        echo "  audit:log --user=U --action=A   write an audit log event\n";
-        echo "  audit:whoami user name\n";
+        echo "  audit:log --user=U --action=A --level=L  write an audit log event\n";
+        echo "  audit:whoami --user=U\n";
         exit(0);
     }
 
@@ -36,26 +36,29 @@ try {
         exit(0);
     }
 
-    // 5) Comando whoami: scrive current user.
-    if ($cmd === 'audit:whoami') {
-        $user = get_current_user();
-        echo $user . "\n";
-        exit(0);
-    }
 
-    // 6) Comando principale: scrive un evento di audit con user e action.
+    // 5) Comando principale: scrive un evento di audit con user e action.
     if ($cmd === 'audit:log') {
         $user = $opts['user'] ?? null;
         $action = $opts['action'] ?? null;
+        $level = $opts['level'] ?? null;
 
         if (!$user || !$action) {
             throw new InvalidArgumentException("Missing --user or --action");
         }
 
-        log_event($cfg, 'info', 'audit.event', ['user' => $user, 'action' => $action, 'level' => $level]);
+
+        log_event($cfg, $level, 'audit.event', ['user' => $user, 'action' => $action]);
         echo "ok\n";
         exit(0);
     }
+
+    if ($cmd === 'audit:whoami') {
+        $user = $opts['user'] ?? null;
+        echo "I am $user";
+        exit(0);
+    }
+    
 
 
     // Se arriviamo qui, il comando non è supportato: generiamo un'eccezione.

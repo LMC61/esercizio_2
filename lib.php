@@ -40,6 +40,7 @@ function load_config(string $path): array {
  * Convenzione: il comando è in $argv[1], le opzioni sono in formato --chiave=valore.
  */
 function parse_cli_args(array $argv, bool $strict): array {
+    
     // Sintassi:
     // php app.php audit:ping --user=alice --action=login
     // Se non viene passato alcun comando, mostriamo l'help
@@ -47,9 +48,9 @@ function parse_cli_args(array $argv, bool $strict): array {
     $opts = [
         'user'   => null,
         'action' => null,
-        'level' =>  'info',
+        'level' => 'info',
     ];
-    
+
     // Scorriamo tutti gli argomenti a partire da indice 2 (dopo script e comando)
     foreach ($argv as $i => $a) {
         if ($i < 2) continue; // salta $argv[0] (script) e $argv[1] (comando)
@@ -58,10 +59,12 @@ function parse_cli_args(array $argv, bool $strict): array {
             $opts['user'] = substr($a, 7);
         } elseif (str_starts_with($a, '--action=')) {
             $opts['action'] = substr($a, 9);
-        } elseif (str_starts_with($a, '--level=')) {
+        } elseif (str_starts_with($a, '--level=')){
             $opts['level'] = substr($a, 8);
-        } else {
+        }
+        else {
             // Argomento non riconosciuto: in modalità strict blocchiamo l'esecuzione
+            
             if ($strict) {
                 throw new InvalidArgumentException("Unknown argument: {$a}");
             }
@@ -95,7 +98,7 @@ function log_event(array $cfg, string $level, string $message, array $context = 
     $ts = date('c');
     // Serializziamo il contesto in JSON (stringa) per stamparlo a fine riga
     $ctx = $context ? json_encode($context, JSON_UNESCAPED_SLASHES) : '';
-    $line = "[{$ts}]{$level}{$ctx} {$cfg["log_format"]}\n";
+    $line = "[{$ts}] {$level} {$message} {$ctx} {$cfg['log_format']}\n";
 
     // Scegliamo dove scrivere il log: file oppure STDERR
     if (($cfg['log_channel'] ?? 'stderr') === 'file') {
